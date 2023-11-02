@@ -10,11 +10,6 @@ import (
 	"sort"
 )
 
-type item struct {
-	k string
-	v int
-}
-
 func main() {
 	var (
 		count   = flag.Bool("c", false, "prefix lines by the number of occurrences")
@@ -34,45 +29,43 @@ func main() {
 		readers = append(readers, f)
 	}
 
-	lines := make(map[string]int, 1024)
+    hash := make(map[string]int, 1024)
 	scanner := bufio.NewScanner(io.MultiReader(readers...))
-
 	for scanner.Scan() {
-		line := scanner.Text()
-		lines[line]++
+		hash[scanner.Text()]++
 	}
 	if scanner.Err() != nil {
 		log.Fatalln(scanner.Err())
 	}
 
-	items := make([]item, 0, len(lines))
-	for k, v := range lines {
-		items = append(items, item{k, v})
+    keys := make([]string, 0, len(hash))
+	for k, _ := range hash {
+        keys = append(keys, k)
 	}
 
 	if *count {
-		sort.Slice(items, func(i, j int) bool {
+		sort.Slice(keys, func(i, j int) bool {
 			if *reverse {
-				return items[i].v < items[j].v
+				return hash[keys[i]] < hash[keys[j]]
 			} else {
-				return items[i].v > items[j].v
+				return hash[keys[i]] > hash[keys[j]]
 			}
 		})
 
-		for _, item := range items {
-			fmt.Printf("%10d\t%s\n", item.v, item.k)
+		for _, k := range keys {
+			fmt.Printf("%10d\t%s\n", hash[k], k)
 		}
 	} else {
-		sort.Slice(items, func(i, j int) bool {
+		sort.Slice(keys, func(i, j int) bool {
 			if *reverse {
-				return items[i].k > items[j].k
+				return keys[i] > keys[j]
 			} else {
-				return items[i].k < items[j].k
+				return keys[i] < keys[j]
 			}
 		})
 
-		for _, item := range items {
-			fmt.Printf("%s\n", item.k)
+		for _, k := range keys {
+			fmt.Printf("%s\n", k)
 		}
 	}
 }
