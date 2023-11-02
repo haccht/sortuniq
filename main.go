@@ -34,7 +34,7 @@ func main() {
 		readers = append(readers, f)
 	}
 
-	lines := map[string]int{}
+	lines := make(map[string]int, 1024)
 	scanner := bufio.NewScanner(io.MultiReader(readers...))
 
 	for scanner.Scan() {
