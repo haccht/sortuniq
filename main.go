@@ -29,7 +29,7 @@ func main() {
 		readers = append(readers, f)
 	}
 
-    hash := make(map[string]int, 1024)
+	hash := make(map[string]int, 1024)
 	scanner := bufio.NewScanner(io.MultiReader(readers...))
 	for scanner.Scan() {
 		hash[scanner.Text()]++
@@ -38,9 +38,9 @@ func main() {
 		log.Fatalln(scanner.Err())
 	}
 
-    keys := make([]string, 0, len(hash))
+	keys := make([]string, 0, len(hash))
 	for k, _ := range hash {
-        keys = append(keys, k)
+		keys = append(keys, k)
 	}
 
 	if *count {
