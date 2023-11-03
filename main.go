@@ -9,12 +9,12 @@ import (
 	"os"
 	"sort"
 
-    flags "github.com/jessevdk/go-flags"
+	flags "github.com/jessevdk/go-flags"
 )
 
 type options struct {
-	Count    bool `short:"c" long:"count" description:"Prefix lines by the number of occurrences"`
-    Reverse  bool `short:"r" long:"reverse" description:"Reverse the result"`
+	Count   bool `short:"c" long:"count" description:"Prefix lines by the number of occurrences"`
+	Reverse bool `short:"r" long:"reverse" description:"Reverse the result"`
 }
 
 func main() {
@@ -28,9 +28,9 @@ func main() {
 	}
 
 	readers := make([]io.Reader, 0, len(args)+1)
-    if len(args) == 0 {
-        readers = append(readers, os.Stdin)
-    }
+	if len(args) == 0 {
+		readers = append(readers, os.Stdin)
+	}
 	for _, arg := range flag.Args() {
 		f, err := os.Open(arg)
 		if err != nil {
