@@ -64,7 +64,7 @@ func main() {
 		})
 
 		for _, k := range keys {
-			fmt.Printf("%10d\t%s\n", hash[k], k)
+			fmt.Printf("%8d\t%s\n", hash[k], k)
 		}
 	} else {
 		sort.Slice(keys, func(i, j int) bool {
