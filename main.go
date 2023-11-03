@@ -8,24 +8,35 @@ import (
 	"log"
 	"os"
 	"sort"
+
+    flags "github.com/jessevdk/go-flags"
 )
 
-func main() {
-	var (
-		count   = flag.Bool("c", false, "prefix lines by the number of occurrences")
-		reverse = flag.Bool("r", false, "reverse the result")
-	)
-	flag.Parse()
+type options struct {
+	Count    bool `short:"c" long:"count" description:"Prefix lines by the number of occurrences"`
+    Reverse  bool `short:"r" long:"reverse" description:"Reverse the result"`
+}
 
-	readers := make([]io.Reader, 0, flag.NArg()+1)
-	readers = append(readers, os.Stdin)
+func main() {
+	var opts options
+	args, err := flags.Parse(&opts)
+	if err != nil {
+		if fe, ok := err.(*flags.Error); ok && fe.Type == flags.ErrHelp {
+			os.Exit(0)
+		}
+		log.Fatal(err)
+	}
+
+	readers := make([]io.Reader, 0, len(args)+1)
+    if len(args) == 0 {
+        readers = append(readers, os.Stdin)
+    }
 	for _, arg := range flag.Args() {
 		f, err := os.Open(arg)
 		if err != nil {
 			log.Fatalf("fail to open file %s: %s", arg, err)
 		}
 		defer f.Close()
-
 		readers = append(readers, f)
 	}
 
@@ -43,9 +54,9 @@ func main() {
 		keys = append(keys, k)
 	}
 
-	if *count {
+	if opts.Count {
 		sort.Slice(keys, func(i, j int) bool {
-			if *reverse {
+			if opts.Reverse {
 				return hash[keys[i]] < hash[keys[j]]
 			} else {
 				return hash[keys[i]] > hash[keys[j]]
@@ -57,7 +68,7 @@ func main() {
 		}
 	} else {
 		sort.Slice(keys, func(i, j int) bool {
-			if *reverse {
+			if opts.Reverse {
 				return keys[i] > keys[j]
 			} else {
 				return keys[i] < keys[j]
