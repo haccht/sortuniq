@@ -19,16 +19,16 @@ Help Options:
 
 $ ps aux | awk '{print $1}' | sortuniq
 USER
+haccht
 message+
 root
 syslog
 systemd+
-thachimu
 www-data
 
 $ ps aux | awk '{print $1}' | sortuniq -cn
   99  root
-  14  thachimu
+  14  haccht
    3  systemd+
    2  www-data
    1  syslog
