@@ -39,7 +39,7 @@ $ ps aux | awk '{print $1}' | sortuniq -cn
 Performance comparison:
 
 ```
-$ time ( cat /dev/urandom | tr -dc '0-9' | fold -w 5 | head -n 10000000 | sortuniq -c > /dev/null )
+$ time ( cat /dev/urandom | tr -dc '0-9' | fold -w 5 | head -n 10000000 | sortuniq -cn > /dev/null )
 
 real    0m2.516s
 user    0m1.891s
