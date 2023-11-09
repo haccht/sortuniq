@@ -50,8 +50,8 @@ func run() error {
 	for scanner.Scan() {
 		hash[scanner.Text()]++
 	}
-	if scanner.Err() != nil {
-		return scanner.Err()
+	if err := scanner.Err(); err != nil {
+		return err
 	}
 
 	keys := make([]string, 0, len(hash))
