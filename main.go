@@ -14,9 +14,10 @@ import (
 )
 
 type options struct {
-	Count   bool `short:"c" long:"count" description:"Prefix the number of occurrences"`
-	Sort    bool `short:"n" long:"order" description:"Sort by the number of occurrences"`
-	Reverse bool `short:"r" long:"reverse" description:"Reverse the order"`
+	WithCount bool `short:"c" long:"count" description:"Prefix the number of occurrences"`
+	WithRate  bool `short:"R" long:"rate" description:"Prefix the percentage of occurrences"`
+	SortByNum bool `short:"n" long:"order" description:"Sort by the number of occurrences"`
+	Reverse   bool `short:"r" long:"reverse" description:"Reverse the order"`
 }
 
 func run() error {
@@ -45,9 +46,11 @@ func run() error {
 		os.Exit(0)
 	}
 
+	total := 0
 	hash := make(map[string]int, 1024)
 	scanner := bufio.NewScanner(io.MultiReader(readers...))
 	for scanner.Scan() {
+		total++
 		hash[scanner.Text()]++
 	}
 	if err := scanner.Err(); err != nil {
@@ -55,11 +58,11 @@ func run() error {
 	}
 
 	keys := make([]string, 0, len(hash))
-	for k, _ := range hash {
+	for k := range hash {
 		keys = append(keys, k)
 	}
 
-	if opts.Sort {
+	if opts.SortByNum {
 		sort.Slice(keys, func(i, j int) bool {
 			return hash[keys[i]] > hash[keys[j]]
 		})
@@ -72,17 +75,18 @@ func run() error {
 		slices.Reverse(keys)
 	}
 
-	if opts.Count {
-		w := tabwriter.NewWriter(os.Stdout, 4, 0, 1, ' ', tabwriter.AlignRight)
-		for _, k := range keys {
-			fmt.Fprintf(w, "%d\t  %s\n", hash[k], k)
+	w := tabwriter.NewWriter(os.Stdout, 4, 0, 1, ' ', tabwriter.AlignRight)
+	for _, k := range keys {
+		if opts.WithCount {
+			fmt.Fprintf(w, "%d\t  ", hash[k])
 		}
-		w.Flush()
-	} else {
-		for _, k := range keys {
-			fmt.Println(k)
+		if opts.WithRate {
+			rate := float32(hash[k]) / float32(total) * 100
+			fmt.Fprintf(w, "%6.2f%%\t  ", rate)
 		}
+		fmt.Fprintf(w, "%s\n", k)
 	}
+	w.Flush()
 
 	return nil
 }
