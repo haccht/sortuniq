@@ -10,6 +10,8 @@ Usage:
 
 Application Options:
   -c, --count    Prefix the number of occurrences
+  -R, --rate     Prefix the percentage of occurrences
+  -b, --bar      Prefix a bar chart showing the percentage
   -n, --order    Sort by the number of occurrences
   -r, --reverse  Reverse the order
 
@@ -34,6 +36,15 @@ $ ps aux | awk '{print $1}' | sortuniq -cn
    1  syslog
    1  message+
    1  USER
+
+$ ps aux | awk '{print $1}' | sortuniq -cRbn
+  99   81.82%  ████████████████      root
+  14   11.57%  ██▍                   haccht
+   3    2.48%  ▌                     systemd+
+   2    1.65%  ▍                     www-data
+   1    0.83%  ▏                     message+
+   1    0.83%  ▏                     syslog
+   1    0.83%  ▏                     USER
 ```
 
 Performance comparison:
